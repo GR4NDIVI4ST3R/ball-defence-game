@@ -1,0 +1,17 @@
+{
+  "name": "aimr_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Xavior Pautin",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^7.1.11"
+  },
+  "dependencies": {
+    "npm": "^6.13.7"
+  }
+}
