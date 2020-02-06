@@ -6,6 +6,28 @@ var context = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+//* Constants
+var angle = -30;
+var velocity = 5;
+var margin = 5;
+var mouse = {x: canvas.width/2, y: canvas.height/2}
+
+var ballCount = 125;
+var radius = 30;
+var g = 0.7;
+var maxSpeed = 20;
+var bounceFriction = 0.85;
+var rollFriction = 0.98;
+
+var cannonRadius = 30;
+
+var colorArray = [
+    '#2185C5',
+    '#7ECEFD',
+    '#FFF6E5',
+    '#FF7F66'
+]
+
 //* Functions
 function random(min, max) {
     // num = random decimal * domain + shift to left or right
@@ -27,10 +49,20 @@ window.addEventListener('resize', function() {
 });
 
 // Mouse Position Tracking
-var mouse = {x: canvas.width/2, y: canvas.height/2}
-canvas.addEventListener('mousemove', function(e) {
-    mouse.x = e.x;
-    mouse.y = e.y;
+canvas.addEventListener('mousemove', event => {
+    mouse.x = event.x;
+    mouse.y = canvas.height - event.y;
+
+    let cannonX = cannonRadius + margin;
+    let cannonY = cannonRadius + margin;
+    let angleLimit = -30 * Math.PI / 180;
+
+    if (angle < angleLimit) {
+        angle = angleLimit;
+    }
+    else {
+        angle = Math.atan( (mouse.y - cannonY) / (mouse.x - cannonX) );
+    }
 });
 
 // Fire Cannon
@@ -38,40 +70,57 @@ canvas.addEventListener('click', function() {
 });
 
 // Change Cannon Angle
-var angle = 45;
 canvas.addEventListener("keydown", event => {
     if (event.isComposing || event.keyCode === 229) {
-      return;
+      console.log('keypress');
     }
 });
-//* Constants
-var ballCount = 125;
-var radius = 30;
-var g = 0.7;
-var maxSpeed = 20;
-var bounceFriction = 0.85;
-var rollFriction = 0.98;
-
-var colorArray = [
-    '#2185C5',
-    '#7ECEFD',
-    '#FFF6E5',
-    '#FF7F66'
-]
 
 //* Cannon Object
 function Cannon(velocity) {
-    
+    velocity += 10;
     this.velocity = velocity;
-    this.angle = angle * Math.PI; //! EDIT ME TO BE CORRECT!
+    console.log(velocity);
+    this.angle = angle * Math.PI / 180;
+    this.x = cannonRadius + margin;
+    this.y = canvas.height - cannonRadius - margin;
     
-    this.draw = function() {
+    this.drawBarrel = function() {
+        
+        let barrelSize = cannonRadius * 1.7;
+        let x = this.x + barrelSize * Math.cos(this.angle);
+        let y = this.y - barrelSize * Math.sin(this.angle);
 
+        context.beginPath();
+        context.strokeStyle='#555555';
+        context.lineWidth = 20;
+        context.moveTo(this.x, this.y);
+        context.lineTo(x, y);
+        context.stroke();
+        
+    }
+    
+    this.drawBase = function() {
+        // Draw Circle
+        context.beginPath();
+        context.lineWidth = 1;
+        context.arc(this.x, this.y, cannonRadius, 0, 2 * Math.PI, false);
+        context.fill();
+
+        // // Draw Rectangular Base
+        // context.beginPath();
+        // context.lineWidth = cannonRadius * 2;
+        // context.moveTo(this.x, this.y);
+        // context.lineTo(this.x, canvas.height);
+        // context.stroke();
+        
     }
     
     this.update = function() {
 
-        this.draw();
+        this.angle = angle;
+        this.drawBarrel();
+        this.drawBase();
     }
 }
 
@@ -136,11 +185,12 @@ function Ball(x, y, dx, dy, g, radius, color) {
 
 var ballArray = [];
 
+var cannon = new Cannon(velocity);
+
 function generate() {
     
-    var cannon = new Cannon(angle, velocity);
+    cannon = new Cannon(velocity);
 
-    
     ballArray = [];
     // Ball(x, y, dy, a, radius, color)
     for (let i = 0; i < ballCount; i++) {
@@ -162,11 +212,11 @@ function animate() {
     
     cannon.update();
 
-    for (let i = 0; i < ballArray.length; i++) {
+    // for (let i = 0; i < ballArray.length; i++) {
 
-        ballArray[i].update();
+    //     ballArray[i].update();
         
-    }
+    // }
 
 }
 
