@@ -53,15 +53,20 @@ canvas.addEventListener('mousemove', event => {
     mouse.x = event.x;
     mouse.y = canvas.height - event.y;
 
-    let cannonX = cannonRadius + margin;
     let cannonY = cannonRadius + margin;
     let angleLimit = -30 * Math.PI / 180;
 
-    if (angle < angleLimit) {
+    // if (angle < angleLimit) {
+    //     angle = angleLimit;
+    // }
+    if ((this.y - barrelSize * Math.sin(this.angle)) > canvas.height) {
         angle = angleLimit;
     }
+    else if (mouse.x - cannon.x < 0) {
+        angle = Math.PI + Math.atan( (mouse.y - cannonY) / (mouse.x - cannon.x) );
+    }
     else {
-        angle = Math.atan( (mouse.y - cannonY) / (mouse.x - cannonX) );
+        angle = Math.atan( (mouse.y - cannonY) / (mouse.x - cannon.x) );
     }
 });
 
@@ -91,6 +96,10 @@ function Cannon(velocity) {
         let x = this.x + barrelSize * Math.cos(this.angle);
         let y = this.y - barrelSize * Math.sin(this.angle);
 
+        // Put x and y text over mouse
+        // context.fillText(text,x,y);
+        // context.strokeText(text, x, y);
+
         context.beginPath();
         context.strokeStyle='#555555';
         context.lineWidth = 20;
@@ -107,12 +116,12 @@ function Cannon(velocity) {
         context.arc(this.x, this.y, cannonRadius, 0, 2 * Math.PI, false);
         context.fill();
 
-        // // Draw Rectangular Base
-        // context.beginPath();
-        // context.lineWidth = cannonRadius * 2;
-        // context.moveTo(this.x, this.y);
-        // context.lineTo(this.x, canvas.height);
-        // context.stroke();
+        // Draw Rectangular Base
+        context.beginPath();
+        context.lineWidth = cannonRadius * 2;
+        context.moveTo(this.x, this.y);
+        context.lineTo(this.x, canvas.height);
+        context.stroke();
         
     }
     
