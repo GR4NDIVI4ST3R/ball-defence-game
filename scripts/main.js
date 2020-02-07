@@ -59,10 +59,7 @@ canvas.addEventListener('mousemove', event => {
     // if (angle < angleLimit) {
     //     angle = angleLimit;
     // }
-    if ((this.y - barrelSize * Math.sin(this.angle)) > canvas.height) {
-        angle = angleLimit;
-    }
-    else if (mouse.x - cannon.x < 0) {
+    if (mouse.x - cannon.x < 0) {
         angle = Math.PI + Math.atan( (mouse.y - cannonY) / (mouse.x - cannon.x) );
     }
     else {
@@ -100,12 +97,17 @@ function Cannon(velocity) {
         // context.fillText(text,x,y);
         // context.strokeText(text, x, y);
 
-        context.beginPath();
-        context.strokeStyle='#555555';
-        context.lineWidth = 20;
-        context.moveTo(this.x, this.y);
-        context.lineTo(x, y);
-        context.stroke();
+        if (y > canvas.height) {
+            y = canvas.height;
+            this.angle = Math.asin( (this.y - y)/barrelSize);
+            x = this.x + barrelSize * Math.cos(this.angle);
+        }
+            context.beginPath();
+            context.moveTo(this.x, this.y);
+            context.lineTo(x, y);
+            context.strokeStyle='#555555';
+            context.lineWidth = 20;
+            context.stroke();
         
     }
     
