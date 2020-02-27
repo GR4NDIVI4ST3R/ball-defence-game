@@ -102,12 +102,18 @@ function Cannon(velocity) {
             this.angle = Math.asin( (this.y - y)/barrelSize);
             x = this.x + barrelSize * Math.cos(this.angle);
         }
-            context.beginPath();
-            context.moveTo(this.x, this.y);
-            context.lineTo(x, y);
-            context.strokeStyle='#555555';
-            context.lineWidth = 20;
-            context.stroke();
+        if (x < 0) {
+            x = 0;
+            this.angle = Math.asin( (this.x - x)/barrelSize);
+            y = this.y + barrelSize * Math.sin(this.angle);
+        }
+
+        context.beginPath();
+        context.moveTo(this.x, this.y);
+        context.lineTo(x, y);
+        context.strokeStyle='#555555';
+        context.lineWidth = 20;
+        context.stroke();
         
     }
     
